@@ -1,109 +1,105 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+// DiscoverScreen.js
+import React from 'react';
+import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+const stories = [
+  { id: 1, name: 'Emma Wilson', image: require('../../assets/images/avatar.png') },
+  { id: 2, name: 'James Chen', image: require('../../assets/images/avatar.png') },
+  { id: 3, name: 'Priya Sharma', image: require('../../assets/images/avatar.png') },
+  { id: 4, name: 'Marcus Lee', image: require('../../assets/images/avatar.png') },
+];
 
-export default function TabTwoScreen() {
+const posts = [
+  {
+    id: 1,
+    name: 'Sarah Mitchell',
+    role: 'Product Designer',
+    avatar: require('../../assets/images/avatar.png'),
+    text: 'Just launched our new design system! Check out how we’re improving consistency across our product suite. #DesignSystem #UX',
+    image: require('../../assets/images/avatar.png'),
+    likes: 248,
+    comments: 42,
+  },
+  {
+    id: 2,
+    name: 'David Anderson',
+    role: 'Tech Lead',
+    avatar: require('../../assets/images/avatar.png'),
+    text: 'Excited to announce our upcoming virtual tech conference! Join us for three days of inspiring talks, workshops, and networking.',
+    image: null,
+    event: {
+      title: 'Virtual Tech Conference 2024',
+      date: 'March 15-17, 2024',
+      button: 'Register Now',
+    },
+    likes: 156,
+    comments: 28,
+  },
+];
+
+export default function DiscoverScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView style={styles.container}>
+      <TextInput style={styles.searchBar} placeholder="Search posts, people & more" />
+      
+      {/* Stories Section */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer}>
+        {stories.map(story => (
+          <View key={story.id} style={styles.storyItem}>
+            <Image source={story.image} style={styles.storyImage} />
+            <Text style={styles.storyText}>{story.name}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      
+      {/* Posts Section */}
+      {posts.map(post => (
+        <View key={post.id} style={styles.postContainer}>
+          <View style={styles.postHeader}>
+            <Image source={post.avatar} style={styles.avatar} />
+            <View>
+              <Text style={styles.name}>{post.name}</Text>
+              <Text style={styles.role}>{post.role}</Text>
+            </View>
+          </View>
+          <Text style={styles.postText}>{post.text}</Text>
+          {post.image && <Image source={post.image} style={styles.postImage} />}
+          {post.event && (
+            <View style={styles.eventContainer}>
+              <Text style={styles.eventTitle}>{post.event.title}</Text>
+              <Text style={styles.eventDate}>{post.event.date}</Text>
+              <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>{post.event.button}</Text></TouchableOpacity>
+            </View>
+          )}
+          <View style={styles.postFooter}>
+            <Text>❤️ {post.likes}</Text>
+            <Text>💬 {post.comments}</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+  container: { padding: 15,marginTop: 20 },
+  searchBar: { backgroundColor: '#eee', padding: 10, borderRadius: 10, marginBottom: 15 },
+  storiesContainer: { flexDirection: 'row', marginBottom: 20 },
+  storyItem: { alignItems: 'center', marginRight: 15 },
+  storyImage: { width: 60, height: 60, borderRadius: 30 },
+  storyText: { fontSize: 12, marginTop: 5 },
+  postContainer: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 15 },
+  postHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
+  name: { fontWeight: 'bold' },
+  role: { color: 'gray', fontSize: 12 },
+  postText: { marginBottom: 10 },
+  postImage: { width: '100%', height: 200, borderRadius: 10 },
+  eventContainer: { backgroundColor: '#f3f3f3', padding: 10, borderRadius: 10, marginTop: 10 },
+  eventTitle: { fontWeight: 'bold' },
+  eventDate: { color: 'gray', fontSize: 12 },
+  button: { backgroundColor: '#007bff', padding: 10, marginTop: 5, borderRadius: 5 },
+  buttonText: { color: '#fff', textAlign: 'center' },
+  postFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, fontSize: 12 },
 });
