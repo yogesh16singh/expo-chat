@@ -1,74 +1,144 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Platform,
+  View,
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
+  const [messages, setMessages] = useState<any>([]);
+
+  const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
+
+  const [message, setMessage] = useState(""); // To store the currently typed message
+
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
+
+  const sendChatMessage = async () => {
+    try {
+      const formData = new FormData();
+      if (message) {
+        formData.append("userMessage", message);
+      }
+      attachedFiles?.map((file) => {
+        formData.append("attachments", file);
+      });
+      // const accessToken = await AsyncStorage.getItem("access_token");
+      // const response = await axios.post(
+      //   `${SERVER_URI}/continue-chat`,
+      //   {
+      //     userMessage: message,
+      //     attachments: attachedFiles,
+      //   },
+      //   {
+      //     headers: {
+      //       "access-token": accessToken,
+      //     },
+      //   }
+      // );
+
+      // If message is successfully sent, update UI
+      setMessage("");
+      setAttachedFiles([]);
+      // getMessages();
+
+      // setMessages((prev: any) => [response?.data?.data, ...prev]);
+
+      // updateChatLastMessage(currentChat?._id || "", response.data);
+
+      // Emit message to the server via socket
+      // socket.emit(SEND_MESSAGE_EVENT, response.data);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <FlatList
+        style={styles.messageList}
+        data={messages}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }: { item: any }) => (
+          <View
+            style={[
+              styles.messageContainer,
+              item?.role === "user" ? styles.sent : styles.received,
+            ]}
+          >
+            <Text style={styles.messageText}>{item.content}</Text>
+          </View>
+        )}
+      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Type a message..."
+          value={message}
+          onChangeText={setMessage}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <TouchableOpacity style={styles.sendButton} onPress={sendChatMessage}>
+          <Ionicons name="send" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: { flex: 1, backgroundColor: "#f0f0f0" },
+  headerContainer: { flexDirection: "row", alignItems: "center", right: 22 },
+  profileImage: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
+  headerText: { fontSize: 18, fontWeight: "bold" },
+  messageList: { flex: 1, padding: 4, marginTop: 8 },
+  messageContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginVertical: 6,
+    borderRadius: 10,
+    maxWidth: "80%",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  sent: {
+    alignSelf: "flex-end",
+    backgroundColor: "#2467EC",
+    borderBottomRightRadius: 0,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  received: {
+    alignSelf: "flex-start",
+    backgroundColor: "#646262",
+    borderBottomLeftRadius: 0,
   },
+  messageText: { color: "#fff", fontSize: 14 },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    borderRadius: 25,
+    margin: 8,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    // borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    marginRight: 10,
+    borderColor: "#ccc",
+  },
+  sendButton: { backgroundColor: "#2467EC", padding: 10, borderRadius: 20 },
 });
