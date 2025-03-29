@@ -1,144 +1,127 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  View,
-  FlatList,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+// DiscoverScreen.js
+import React from 'react';
+import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+const stories = [
+  { id: 1, name: 'Emma Wilson', image: require('../../assets/images/avatar.png') },
+  { id: 2, name: 'James Chen', image: require('../../assets/images/avatar.png') },
+  { id: 3, name: 'Priya Sharma', image: require('../../assets/images/avatar.png') },
+  { id: 4, name: 'Marcus Lee', image: require('../../assets/images/avatar.png') },
+];
 
-export default function HomeScreen() {
-  const [messages, setMessages] = useState<any>([]);
+const posts = [
+  {
+    id: 1,
+    name: 'Sarah Mitchell',
+    role: 'Product Designer',
+    avatar: require('../../assets/images/avatar.png'),
+    text: 'Just launched our new design system! Check out how we’re improving consistency across our product suite. #DesignSystem #UX',
+    image: require('../../assets/images/avatar.png'),
+    likes: 248,
+    comments: 42,
+  },
+  {
+    id: 2,
+    name: 'David Anderson',
+    role: 'Tech Lead',
+    avatar: require('../../assets/images/avatar.png'),
+    text: 'Excited to announce our upcoming virtual tech conference! Join us for three days of inspiring talks, workshops, and networking.',
+    image: null,
+    event: {
+      title: 'Virtual Tech Conference 2024',
+      date: 'March 15-17, 2024',
+      button: 'Register Now',
+    },
+    likes: 156,
+    comments: 28,
+  },
+];
 
-  const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
-
-  const [message, setMessage] = useState(""); // To store the currently typed message
-
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
-
-  const sendChatMessage = async () => {
-    try {
-      const formData = new FormData();
-      if (message) {
-        formData.append("userMessage", message);
-      }
-      attachedFiles?.map((file) => {
-        formData.append("attachments", file);
-      });
-      // const accessToken = await AsyncStorage.getItem("access_token");
-      // const response = await axios.post(
-      //   `${SERVER_URI}/continue-chat`,
-      //   {
-      //     userMessage: message,
-      //     attachments: attachedFiles,
-      //   },
-      //   {
-      //     headers: {
-      //       "access-token": accessToken,
-      //     },
-      //   }
-      // );
-
-      // If message is successfully sent, update UI
-      setMessage("");
-      setAttachedFiles([]);
-      // getMessages();
-
-      // setMessages((prev: any) => [response?.data?.data, ...prev]);
-
-      // updateChatLastMessage(currentChat?._id || "", response.data);
-
-      // Emit message to the server via socket
-      // socket.emit(SEND_MESSAGE_EVENT, response.data);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-
+export default function DiscoverScreen() {
   return (
-    <View style={styles.container}>
-      <FlatList
-        style={styles.messageList}
-        data={messages}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }: { item: any }) => (
-          <View
-            style={[
-              styles.messageContainer,
-              item?.role === "user" ? styles.sent : styles.received,
-            ]}
-          >
-            <Text style={styles.messageText}>{item.content}</Text>
-          </View>
-        )}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type a message..."
-          value={message}
-          onChangeText={setMessage}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={sendChatMessage}>
-          <Ionicons name="send" size={20} color="#fff" />
-        </TouchableOpacity>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Discover</Text>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="notifications-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="person-circle-outline" size={28} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+      <TextInput style={styles.searchBar} placeholder="Search posts, people & more" />
+      
+      {/* Stories Section */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer}>
+        {stories.map(story => (
+          <View key={story.id} style={styles.storyItem}>
+            <Image source={story.image} style={styles.storyImage} />
+            <Text style={styles.storyText}>{story.name}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      
+      {/* Posts Section */}
+      {posts.map(post => (
+        <View key={post.id} style={styles.postContainer}>
+          <View style={styles.postHeader}>
+            <Image source={post.avatar} style={styles.avatar} />
+            <View>
+              <Text style={styles.name}>{post.name}</Text>
+              <Text style={styles.role}>{post.role}</Text>
+            </View>
+          </View>
+          <Text style={styles.postText}>{post.text}</Text>
+          {post.image && <Image source={post.image} style={styles.postImage} />}
+          {post.event && (
+            <View style={styles.eventContainer}>
+              <Text style={styles.eventTitle}>{post.event.title}</Text>
+              <Text style={styles.eventDate}>{post.event.date}</Text>
+              <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>{post.event.button}</Text></TouchableOpacity>
+            </View>
+          )}
+          <View style={styles.postFooter}>
+            <Text>❤️ {post.likes}</Text>
+            <Text>💬 {post.comments}</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f0f0" },
-  headerContainer: { flexDirection: "row", alignItems: "center", right: 22 },
-  profileImage: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  messageList: { flex: 1, padding: 4, marginTop: 8 },
-  messageContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    marginVertical: 6,
-    borderRadius: 10,
-    maxWidth: "80%",
+  container: { padding: 15,marginTop: 20,paddingBottom: 20,backgroundColor: '#716D76' },
+   /* Header Styles */
+   header: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingHorizontal: 4,
+    marginBottom: 10 
   },
-  sent: {
-    alignSelf: "flex-end",
-    backgroundColor: "#2467EC",
-    borderBottomRightRadius: 0,
-  },
-  received: {
-    alignSelf: "flex-start",
-    backgroundColor: "#646262",
-    borderBottomLeftRadius: 0,
-  },
-  messageText: { color: "#fff", fontSize: 14 },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#fff",
-    borderRadius: 25,
-    margin: 8,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    // borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    marginRight: 10,
-    borderColor: "#ccc",
-  },
-  sendButton: { backgroundColor: "#2467EC", padding: 10, borderRadius: 20 },
+  headerTitle: { fontSize: 22, fontWeight: 'bold' },
+  headerIcons: { flexDirection: 'row' },
+  iconButton: { marginLeft: 15 },
+  searchBar: { backgroundColor: '#eee', padding: 14, borderRadius: 10, marginBottom: 15 },
+  storiesContainer: { flexDirection: 'row', marginBottom: 20 },
+  storyItem: { alignItems: 'center', marginRight: 15 },
+  storyImage: { width: 60, height: 60, borderRadius: 30 },
+  storyText: { fontSize: 12, marginTop: 5 },
+  postContainer: { backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 15 },
+  postHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
+  name: { fontWeight: 'bold' },
+  role: { color: 'gray', fontSize: 12 },
+  postText: { marginBottom: 10 },
+  postImage: { width: '100%', height: 200, borderRadius: 10 },
+  eventContainer: { backgroundColor: '#f3f3f3', padding: 10, borderRadius: 10, marginTop: 10 },
+  eventTitle: { fontWeight: 'bold' },
+  eventDate: { color: 'gray', fontSize: 12 },
+  button: { backgroundColor: '#007bff', padding: 10, marginTop: 5, borderRadius: 5 },
+  buttonText: { color: '#fff', textAlign: 'center' },
+  postFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, fontSize: 12 },
 });
