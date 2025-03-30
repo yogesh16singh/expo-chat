@@ -15,50 +15,47 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import Constants from 'expo-constants';
+// const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const GOOGLE_API_KEY = Constants?.expoConfig?.extra?.googleApiKey
+console.log("GOOGLE_API_KEY", GOOGLE_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY|| "");
+// Call Google Gemini AI
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export default function HomeScreen() {
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<any>([
+    { role: "bot", content: "Hey! How's it going? 🚀" },
+    { role: "user", content: "Hello" },
+  ]);
 
-  const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
+  // const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
 
   const [message, setMessage] = useState(""); // To store the currently typed message
 
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
+  // const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
 
   const sendChatMessage = async () => {
     try {
-      const formData = new FormData();
-      if (message) {
-        formData.append("userMessage", message);
-      }
-      attachedFiles?.map((file) => {
-        formData.append("attachments", file);
-      });
-      // const accessToken = await AsyncStorage.getItem("access_token");
-      // const response = await axios.post(
-      //   `${SERVER_URI}/continue-chat`,
-      //   {
-      //     userMessage: message,
-      //     attachments: attachedFiles,
-      //   },
-      //   {
-      //     headers: {
-      //       "access-token": accessToken,
-      //     },
-      //   }
-      // );
+      if (!message.trim()) return;
 
-      // If message is successfully sent, update UI
+      const newMessage = { role: "user", content: message };
+      setMessages((prevMessages: any) => [newMessage, ...prevMessages]);
       setMessage("");
-      setAttachedFiles([]);
-      // getMessages();
+      try {
+        const response = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: message }] }],
+        });
+        const botReply = response.response.text();
 
-      // setMessages((prev: any) => [response?.data?.data, ...prev]);
-
-      // updateChatLastMessage(currentChat?._id || "", response.data);
-
-      // Emit message to the server via socket
-      // socket.emit(SEND_MESSAGE_EVENT, response.data);
+        setMessages((prevMessages: any) => [
+          { role: "bot", content: botReply },
+          ...prevMessages,
+        ]);
+      } catch (error) {
+        console.error("Error fetching AI response:", error);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -67,6 +64,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <FlatList
+        inverted
         style={styles.messageList}
         data={messages}
         keyExtractor={(item, index) => index.toString()}
@@ -97,7 +95,11 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f0f0" },
+  container: {
+    flex: 1,
+    marginTop: 20,
+    backgroundColor: "#f0f0f0",
+  },
   headerContainer: { flexDirection: "row", alignItems: "center", right: 22 },
   profileImage: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
   headerText: { fontSize: 18, fontWeight: "bold" },
