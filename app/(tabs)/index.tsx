@@ -14,23 +14,33 @@ import { Ionicons } from "@expo/vector-icons";
 const stories = [
   {
     id: 1,
-    name: "Emma Wilson",
-    image: require("../../assets/images/avatar.png"),
+    name: "Rajat Kumar",
+    image: require("../../assets/images/rp-1.jpg"),
   },
   {
     id: 2,
-    name: "James Chen",
-    image: require("../../assets/images/avatar.png"),
+    name: "Anjali Verma",
+    image: require("../../assets/images/rp-2.png"),
   },
   {
     id: 3,
     name: "Priya Sharma",
-    image: require("../../assets/images/avatar.png"),
+    image: require("../../assets/images/rp-3.jpg"),
   },
   {
     id: 4,
-    name: "Marcus Lee",
-    image: require("../../assets/images/avatar.png"),
+    name: "Rahul Singh",
+    image: require("../../assets/images/rp-4.jpg"),
+  },
+  {
+    id: 5,
+    name: "Sneha Patel",
+    image: require("../../assets/images/rp-5.jpg"),
+  },
+  {
+    id: 6,
+    name: "Amit Gupta",
+    image: require("../../assets/images/rp-6.jpg"),
   },
 ];
 
@@ -93,18 +103,23 @@ export default function DiscoverScreen() {
       </View>
 
       {/* Stories Section */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.storiesContainer}
-      >
-        {stories.map((story) => (
-          <View key={story.id} style={styles.storyItem}>
-            <Image source={story.image} style={styles.storyImage} />
-            <Text style={styles.storyText}>{story.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <View style={styles.storiesHeader}>
+        <Text style={styles.storiesTitle}>Stories</Text>
+        <TouchableOpacity>
+          <Text style={styles.viewAll}>View All</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.storiesContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {stories.map((story) => (
+            <View key={story.id} style={styles.storyItem}>
+              <Image source={story.image} style={styles.storyImage} />
+              <Text style={styles.storyText}>{story.name}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
 
       {/* Posts Section */}
       {posts.map((post) => (
@@ -173,10 +188,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "black",
   },
-  storiesContainer: { flexDirection: "row", marginBottom: 20 },
-  storyItem: { alignItems: "center", marginRight: 15 },
-  storyImage: { width: 60, height: 60, borderRadius: 30 },
-  storyText: { fontSize: 12, marginTop: 5 },
+  storiesHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 4,
+  },
+
+  storiesTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+
+  viewAll: {
+    fontSize: 16,
+    color: "#1E53E5",
+    textDecorationLine: "underline",
+    fontWeight: "600",
+  },
+
+  storiesContainer: {
+    // backgroundColor: "#fff",
+    paddingHorizontal: 4,
+    borderRadius: 10,
+    // borderWidth: 1,
+    // borderColor: "#ddd",
+    marginBottom: 15,
+  },
+
+  storyItem: {
+    alignItems: "center",
+    marginRight: 15,
+  },
+
+  storyImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    padding: 2,
+    borderColor: "#fff",
+  },
+
+  storyText: {
+    fontSize: 12,
+    marginTop: 5,
+    fontWeight: "500",
+    color: "#333",
+  },
   postContainer: {
     backgroundColor: "#fff",
     padding: 15,
