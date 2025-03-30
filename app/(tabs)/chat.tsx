@@ -1,7 +1,5 @@
 import {
-  Image,
   StyleSheet,
-  Platform,
   View,
   FlatList,
   Text,
@@ -9,18 +7,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Constants from 'expo-constants';
-// const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const GOOGLE_API_KEY = Constants?.expoConfig?.extra?.googleApiKey
-console.log("GOOGLE_API_KEY", GOOGLE_API_KEY);
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY|| "");
+
+const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 // Call Google Gemini AI
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -30,11 +23,8 @@ export default function HomeScreen() {
     { role: "user", content: "Hello" },
   ]);
 
-  // const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
 
   const [message, setMessage] = useState(""); // To store the currently typed message
-
-  // const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
 
   const sendChatMessage = async () => {
     try {
